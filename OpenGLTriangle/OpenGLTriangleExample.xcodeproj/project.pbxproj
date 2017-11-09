@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4C8932D71FB46C8C000B0513 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C8932D61FB46C8C000B0513 /* main.cpp */; };
-		4C8932DE1FB46CEC000B0513 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4C8932DD1FB46CEC000B0513 /* glad.c */; };
+		4C8932E01FB47A1D000B0513 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4C8932DF1FB47A1D000B0513 /* glad.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,7 +26,7 @@
 /* Begin PBXFileReference section */
 		4C8932D31FB46C8C000B0513 /* OpenGLTriangleExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OpenGLTriangleExample; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C8932D61FB46C8C000B0513 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		4C8932DD1FB46CEC000B0513 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../SDKs/glad/src/glad.c; sourceTree = "<group>"; };
+		4C8932DF1FB47A1D000B0513 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../../SDKs/glad/src/glad.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +59,7 @@
 		4C8932D51FB46C8C000B0513 /* OpenGLTriangleExample */ = {
 			isa = PBXGroup;
 			children = (
-				4C8932DD1FB46CEC000B0513 /* glad.c */,
+				4C8932DF1FB47A1D000B0513 /* glad.c */,
 				4C8932D61FB46C8C000B0513 /* main.cpp */,
 			);
 			path = OpenGLTriangleExample;
@@ -122,7 +122,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C8932D71FB46C8C000B0513 /* main.cpp in Sources */,
-				4C8932DE1FB46CEC000B0513 /* glad.c in Sources */,
+				4C8932E01FB47A1D000B0513 /* glad.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +252,7 @@
 				4C8932DC1FB46C8C000B0513 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
