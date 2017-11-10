@@ -6,7 +6,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-
+void renderFlashingTriangles(unsigned int program);
 /*
  The vertex shader is one of the shaders that are programmable by people like us. Modern OpenGL requires that we at least set up a vertex and fragment shader if we want to do some rendering so we will briefly introduce shaders and configure two very simple shaders for drawing our first triangle. In the next tutorial we'll discuss shaders in more detail.
  
@@ -182,15 +182,9 @@ int main()
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         
-        // update shader uniform
-        float timeValue = glfwGetTime(); // get time in seconds
-        float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        
-////        glDrawArrays(GL_POINTS, 0, 3);
-//        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+//        glDrawArrays(GL_POINTS, 0, 3);
+//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        renderFlashingTriangles(shaderProgram);
         
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -225,4 +219,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void renderFlashingTriangles(unsigned int program)
+{
+    // update shader uniform
+    float timeValue = glfwGetTime(); // get time in seconds
+    float greenValue = sin(timeValue) / 2.0f + 0.5f;
+    int vertexColorLocation = glGetUniformLocation(program, "ourColor");
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+    
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
