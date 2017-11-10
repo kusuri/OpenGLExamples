@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <cmath>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -11,11 +12,11 @@ void processInput(GLFWwindow *window);
  
  The first thing we need to do is write the vertex shader in the shader language GLSL (OpenGL Shading Language) and then compile this shader so we can use it in our application. 
  */
-const char *vertexShaderSource = "#version 330 core\n"
+const char *vertexShaderSource ="#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
 "void main()\n"
 "{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos  .z, 1.0);\n"
+"   gl_Position = vec4(aPos, 1.0);\n"
 "}\0";
 
 /*
@@ -23,10 +24,11 @@ const char *vertexShaderSource = "#version 330 core\n"
  */
 const char *fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
+"uniform vec4 ourColor;\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(0.79f, 0.23f, 0.69f, 1.0f);\n"
-"}\0";
+"   FragColor = ourColor;\n"
+"}\n\0";
 
 
 // settings
@@ -172,9 +174,20 @@ int main()
         // -----
         processInput(window);
         
-        // draw our first triangle
+        /* be sure to activate the shader before any calls to glUniform
+         Note that finding the uniform location does not require you to use the shader program first, 
+         but updating a uniform does require you to first use the program (by calling glUseProgram), 
+         because it sets the uniform on the currently active shader program.
+        */
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
+        
+        // update shader uniform
+        float timeValue = glfwGetTime(); // get time in seconds
+        float greenValue = sin(timeValue) / 2.0f + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        
 ////        glDrawArrays(GL_POINTS, 0, 3);
 //        glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
