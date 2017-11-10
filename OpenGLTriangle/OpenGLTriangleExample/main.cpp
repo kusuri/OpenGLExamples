@@ -132,6 +132,13 @@ int main()
         0.3f, -0.8f, 0.0f, 0.0f, 0.0f, 1.0f// top left point
     };
     
+    /* be sure to activate the shader before any calls to glUniform
+     Note that finding the uniform location does not require you to use the shader program first,
+     but updating a uniform does require you to first use the program (by calling glUseProgram),
+     because it sets the uniform on the currently active shader program.
+     */
+    glUseProgram(shaderProgram);
+    
     // manage memory via so called vertex buffer objects (VBO) that can store a large number of vertices in the GPU's memory. we can send large batches of data all at once to the graphics card without having to send data a vertex a time.
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -160,13 +167,6 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         // At the start of each render iteration we always want to clear the screen otherwise we would still see the results from the previous iteration
         glClear(GL_COLOR_BUFFER_BIT);
-        
-        /* be sure to activate the shader before any calls to glUniform
-         Note that finding the uniform location does not require you to use the shader program first,
-         but updating a uniform does require you to first use the program (by calling glUseProgram),
-         because it sets the uniform on the currently active shader program.
-         */
-        glUseProgram(shaderProgram);
 
         glBindVertexArray(VAO);
         

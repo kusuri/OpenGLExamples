@@ -105,8 +105,33 @@ public:
             { 0.5f, 0.5f,}
         };
         vertices.add (v3);
-        int indices[] = {0, 1, 2};
-        numIndices = 3;
+        
+        Vertex v4 =
+        {
+            { 0.55f, -0.5f, 0.0f},
+            { 0.5f, 0.5f, 0.5f},
+            { 1.0f, 0.0f, 0.0f, 1.0f },
+            { 0.5f, 0.5f,}
+        };
+        vertices.add (v4);
+        Vertex v5 =
+        {
+            { 0.8f, -0.8f, 0.0f},
+            { 0.5f, 0.5f, 0.5f},
+            { 0.0f, 1.0f, 0.0f, 1.0f },
+            { 0.5f, 0.5f}
+        };
+        vertices.add (v5);
+        Vertex v6 =
+        {
+            { 0.3f, -0.8f, 0.0f},
+            { 0.5f, 0.5f, 0.5f},
+            { 0.0f, 0.0f, 1.0f, 1.0f },
+            { 0.5f, 0.5f,}
+        };
+        vertices.add (v6);
+        int indices[] = {0, 1, 2, 3, 4, 5};
+        numIndices = 6;
         // ************************************************
         
         // Now prepare this information to be drawn
