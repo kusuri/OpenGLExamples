@@ -88,6 +88,9 @@ int main()
         return -1;
     }
     
+    const GLubyte* v = glGetString (GL_SHADING_LANGUAGE_VERSION);
+    std::cout << "OpenGL version:\n" << v << std::endl;
+    
     // create shader object
     unsigned int vertexShader = createShader(multiColourVertexShader, true);
     
