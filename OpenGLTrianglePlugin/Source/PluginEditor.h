@@ -17,7 +17,8 @@
 //==============================================================================
 /**
 */
-class OpenGltrianglePluginAudioProcessorEditor  : public AudioProcessorEditor
+class OpenGltrianglePluginAudioProcessorEditor  : public AudioProcessorEditor,
+                                                public ButtonListener, private Timer
 {
 public:
     OpenGltrianglePluginAudioProcessorEditor (OpenGltrianglePluginAudioProcessor&);
@@ -27,15 +28,19 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 
-private:
+    void buttonClicked(Button* b) override;
+private:    
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     OpenGltrianglePluginAudioProcessor& processor;
    
+    // button panel
+    ScopedPointer<ToggleButton> buttonPanel;
     // Discrete knob
     ScopedPointer<Slider> slider;
     
     OpenGLComponent glComponent;
 
+    ScopedPointer<AudioVisualiserComponent> waveform;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OpenGltrianglePluginAudioProcessorEditor)
 };
