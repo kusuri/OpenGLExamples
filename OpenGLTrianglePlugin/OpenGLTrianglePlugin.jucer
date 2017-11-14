@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="oAODQt" name="OpenGLTrianglePlugin" displaySplashScreen="0"
+              reportAppUsage="1" splashScreenColour="Dark" projectType="audioplug"
+              version="1.0.0" bundleIdentifier="com.yourcompany.OpenGLTrianglePlugin"
+              includeBinaryInAppConfig="1" cppLanguageStandard="11" buildVST="1"
+              buildVST3="0" buildAU="1" buildAUv3="0" buildRTAS="0" buildAAX="0"
+              buildStandalone="1" enableIAA="0" pluginName="OpenGLTrianglePlugin"
+              pluginDesc="OpenGLTrianglePlugin" pluginManufacturer="yourcompany"
+              pluginManufacturerCode="Manu" pluginCode="Oaod" pluginChannelConfigs=""
+              pluginIsSynth="0" pluginWantsMidiIn="0" pluginProducesMidiOut="0"
+              pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0" pluginAUExportPrefix="OpenGLTrianglePluginAU"
+              pluginRTASCategory="" aaxIdentifier="com.yourcompany.OpenGLTrianglePlugin"
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.1.2">
+  <MAINGROUP id="ZuuZhN" name="OpenGLTrianglePlugin">
+    <GROUP id="{FD5265AC-401A-3B1D-CEE9-7739E6318C27}" name="Source">
+      <FILE id="L8fbua" name="OpenGLComponent.cpp" compile="1" resource="0"
+            file="Source/OpenGLComponent.cpp"/>
+      <FILE id="g110gN" name="OpenGLComponent.h" compile="0" resource="0"
+            file="Source/OpenGLComponent.h"/>
+      <FILE id="KYxzuH" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="Sl1ROI" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="gy3a1E" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="UUdtvI" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="OpenGLTrianglePlugin"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="OpenGLTrianglePlugin"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_events" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_video" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../SDKs/JuceLibrary/5.1.2/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+</JUCERPROJECT>
