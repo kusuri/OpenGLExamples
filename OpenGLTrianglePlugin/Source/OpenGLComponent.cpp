@@ -13,8 +13,16 @@
 
 OpenGLComponent::OpenGLComponent()
 {
+    // Sets the OpenGL version to 3.2
+    openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
+    
+    // Attach the OpenGL context but do not start [ see start() ]
+    openGLContext.setRenderer(this);
+    openGLContext.attachTo(*this);
+    openGLContext.setContinuousRepainting (true);
+    
 //    setSize (800, 600);
-//    startTimerHz(1000);
+    startTimerHz(1000);
     x = 0;
     y = 0;
     position = nullptr;
@@ -25,20 +33,38 @@ OpenGLComponent::OpenGLComponent()
 
 OpenGLComponent::~OpenGLComponent()
 {
-    shutdownOpenGL();
+    // Turn off OpenGL
+    openGLContext.setContinuousRepainting (false);
+    openGLContext.detach();
 }
 
-void OpenGLComponent::initialise()
+//==========================================================================
+// OpenGL Callbacks
+
+/** Called before rendering OpenGL, after an OpenGLContext has been associated
+ with this OpenGLRenderer (this component is a OpenGLRenderer).
+ Sets up GL objects that are needed for rendering.
+ */
+void OpenGLComponent::newOpenGLContextCreated()
 {
+    // Setup Shaders
     createShaders();
+    
+    // Setup Buffer Objects
+//    openGLContext.extensions.glGenBuffers (1, &VBO); // Vertex Buffer Object
+//    openGLContext.extensions.glGenBuffers (1, &EBO); // Element Buffer Object
 }
 
-void OpenGLComponent::shutdown()
+/** Called when done rendering OpenGL, as an OpenGLContext object is closing.
+ Frees any GL objects created during rendering.
+ */
+void OpenGLComponent::openGLContextClosing()
 {
+    shader->release();
     shader = nullptr;
 }
 
-void OpenGLComponent::render()
+void OpenGLComponent::renderOpenGL()
 {
     // Stuff to be done before defining your triangles
     jassert (OpenGLHelpers::isContextActive());

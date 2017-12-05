@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="pNMfHM" name="WaveformExamples" displaySplashScreen="0" reportAppUsage="1"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.WaveformExamples" includeBinaryInAppConfig="1"
+              cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
+  <MAINGROUP id="q8TaH8" name="WaveformExamples">
+    <GROUP id="{1D43732B-1C3D-8696-38F5-5B3B1B7F52A3}" name="Source">
+      <GROUP id="{E30A10C7-1531-5B04-B57D-396FB6533F12}" name="Waveforms">
+        <FILE id="MrDxmR" name="WaveformThumbnail.cpp" compile="1" resource="0"
+              file="../../../accusonus-toolbox/Cpp/audio/WaveformThumbnail.cpp"/>
+        <FILE id="UqPwUO" name="WaveformThumbnail.h" compile="0" resource="0"
+              file="../../../accusonus-toolbox/Cpp/audio/WaveformThumbnail.h"/>
+      </GROUP>
+      <FILE id="JmNHGI" name="AudioIO.cpp" compile="1" resource="0" file="../../../accusonus-toolbox/Cpp/audio/AudioIO.cpp"/>
+      <FILE id="iHomXZ" name="AudioIO.h" compile="0" resource="0" file="../../../accusonus-toolbox/Cpp/audio/AudioIO.h"/>
+      <FILE id="E7u9ui" name="CircularBuffer.h" compile="0" resource="0"
+            file="../../../accusonus-toolbox/Cpp/audio/CircularBuffer.h"/>
+      <FILE id="pDB55b" name="LoopAudio.h" compile="0" resource="0" file="../../../accusonus-toolbox/Cpp/audio/LoopAudio.h"/>
+      <FILE id="HRajpJ" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="HmQkuu" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraLinkerFlags="/opt/intel/mkl/lib/libmkl_intel_lp64.a&#10;/opt/intel/mkl/lib/libmkl_sequential.a&#10;/opt/intel/mkl/lib/libmkl_core.a&#10;/opt/intel/ipp/lib/libippcore.a&#10;/opt/intel/ipp/lib/libipps.a&#10;/opt/intel/ipp/lib/libippvm.a">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" enablePluginBinaryCopyStep="1" isDebug="1" optimisation="1"
+                       linkTimeOptimisation="0" targetName="WaveformExamples" headerPath="~/accusonus-toolbox/Cpp/audio&#10;~/SDKs/Eigen/3.3.2/&#10;/opt/intel/ipp/include/&#10;/opt/intel/mkl/include/"/>
+        <CONFIGURATION name="Release" enablePluginBinaryCopyStep="1" isDebug="0" optimisation="3"
+                       linkTimeOptimisation="1" targetName="WaveformExamples" headerPath="~/accusonus-toolbox/Cpp/audio&#10;~/SDKs/Eigen/3.3.2/&#10;/opt/intel/ipp/include/&#10;/opt/intel/mkl/include/&#10;/opt/intel/daal/include/"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_events" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_video" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>

@@ -21,15 +21,17 @@ struct Vertex  // class storing the information about a single vertex
     float texCoord[2];
 };
 
-class OpenGLComponent : public OpenGLAppComponent, private Timer
+class OpenGLComponent : public Component,
+                        public OpenGLRenderer,
+                        private Timer
 {
 public:
     OpenGLComponent();
     ~OpenGLComponent();
     
-    void initialise() override;
-    void shutdown() override;
-    void render() override;
+    void newOpenGLContextCreated() override;
+    void openGLContextClosing() override;
+    void renderOpenGL() override;
     void paint (Graphics& g) override;
     void resized() override;
     void createShaders();
@@ -45,6 +47,8 @@ private:
     const char* vertexShader;
     const char* fragmentShader;
     
+    OpenGLContext openGLContext;
+
     ScopedPointer<OpenGLShaderProgram> shader;
     ScopedPointer<OpenGLShaderProgram::Attribute> position, normal, sourceColour, textureCoordIn;
     

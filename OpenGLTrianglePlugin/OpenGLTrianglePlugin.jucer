@@ -14,6 +14,9 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="5.1.2">
   <MAINGROUP id="ZuuZhN" name="OpenGLTrianglePlugin">
     <GROUP id="{FD5265AC-401A-3B1D-CEE9-7739E6318C27}" name="Source">
+      <FILE id="znverl" name="AudioWaveform.cpp" compile="1" resource="0"
+            file="Source/AudioWaveform.cpp"/>
+      <FILE id="qSvufV" name="AudioWaveform.h" compile="0" resource="0" file="Source/AudioWaveform.h"/>
       <FILE id="L8fbua" name="OpenGLComponent.cpp" compile="1" resource="0"
             file="Source/OpenGLComponent.cpp"/>
       <FILE id="g110gN" name="OpenGLComponent.h" compile="0" resource="0"

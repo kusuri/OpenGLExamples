@@ -26,6 +26,8 @@ OpenGltrianglePluginAudioProcessorEditor::OpenGltrianglePluginAudioProcessorEdit
     
     addAndMakeVisible(glComponent);
 
+//    addAndMakeVisible(waveform = new AudioWaveform);
+    
     int width = 700;
     int height = 540;
     
@@ -60,7 +62,7 @@ void OpenGltrianglePluginAudioProcessorEditor::resized()
     auto rect = getLocalBounds();
     buttonPanel->setBounds(rect.removeFromLeft(100).withHeight(100));
     slider->setBounds(rect.removeFromTop(100).withWidth(100));
-    waveform->setBounds(rect.removeFromTop(200).withWidth(getWidth()));
+//    waveform->setBounds(rect.removeFromTop(200).withWidth(getWidth()));
     glComponent.setBounds(rect.removeFromBottom(getHeight()/2.0f));
 }
 

@@ -153,6 +153,15 @@ void OpenGltrianglePluginAudioProcessor::processBlock (AudioSampleBuffer& buffer
 
         // ..do something to the data...
     }
+    
+//    if (hasEditor())
+//    {
+//        AudioProcessorEditor* e = getActiveEditor();
+//        OpenGltrianglePluginAudioProcessorEditor* editor = static_cast<OpenGltrianglePluginAudioProcessorEditor*>(e);
+//        if (editor)
+//            if (editor->waveform)
+//                editor->waveform->processBlock(buffer.getReadPointer(0), buffer.getNumSamples());
+//    }
 }
 
 //==============================================================================
