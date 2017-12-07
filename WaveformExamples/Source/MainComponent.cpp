@@ -9,6 +9,7 @@
 #include "AudioIO.h"
 #include "LoopAudio.h"
 #include "WaveformThumbnail.h"
+#include "OpenGLWaveform.h"
 
 #include "ipps.h"
 #include "ippvm.h"
@@ -19,7 +20,8 @@
 */
 class MainContentComponent   : public AudioAppComponent,
                                 public SliderListener,
-                                public ButtonListener
+                                public ButtonListener,
+                                public ComboBoxListener
 {
 public:
     //==============================================================================
@@ -40,15 +42,25 @@ public:
         gainKnob->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
         gainKnob->addListener(this);
 
-        addAndMakeVisible(waveformthumbnail);
+        addAndMakeVisible(waveformChoices = new ComboBox);
+        waveformChoices->addItem("Waveform thumbnail", 1);
+        waveformChoices->addItem("OpenGL Waveform", 2);
+        waveformChoices->setSelectedId(2, dontSendNotification);
+        waveformChoices->addListener(this);
 
-        setSize (800, 600);
+        addAndMakeVisible(waveformthumbnail);
 
         audioIO.registerBasicFormats();
         audioLooper.setLooping(true);
 
         // specify the number of input and output channels that we want to open
         setAudioChannels (2, 2);
+
+        selectWaveformType(2);
+
+        setSize (800, 600);
+
+        loadClip(File("~/Music/audiotracks/loops/blankbanshee2.wav"));
     }
 
     ~MainContentComponent()
@@ -72,6 +84,13 @@ public:
         // For more details, see the help for AudioProcessor::prepareToPlay()
         sumBuffer = new AudioSampleBuffer(1, samplesPerBlockExpected);
         sumBuffer->clear();
+
+        // Setup Ring Buffer of GLfloat's for the visualizer to use
+        // Uses two channels
+        ringBuffer = new RingBuffer<GLfloat> (2, samplesPerBlockExpected * 10);
+
+        addAndMakeVisible(openGLWaveform = new OpenGLWaveform(ringBuffer));
+
     }
 
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
@@ -91,16 +110,10 @@ public:
             const auto numSamples = bufferToFill.numSamples;
             bufferToFill.buffer->applyGain(0, numSamples, gain.get());
 
-            sumBuffer->clear();
-            ippsAdd_32f(bufferToFill.buffer->getWritePointer(0), bufferToFill.buffer->getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
-            ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
-            thumbnailToUpdate.addBlock(nextSampleNum, *sumBuffer, 0, numSamples);
-            nextSampleNum += numSamples;
-            if (nextSampleNum > audioLooper.getNumSamples())
-            {
-                nextSampleNum = 0;
-                thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
-            }
+            if (waveformChoices->getSelectedId() == 1)
+                feedWaveformThumbnail(*bufferToFill.buffer);
+            else
+                feedOpenGLWaveform(*bufferToFill.buffer);
         }
     }
 
@@ -132,10 +145,14 @@ public:
         loadButton->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
         playButton->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
         gainKnob->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
+        waveformChoices->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
         rect.removeFromTop(buttonSize);
 
         rect.setLeft(0);
         waveformthumbnail.setBounds(rect);
+
+        if (openGLWaveform)
+            openGLWaveform->setBounds(rect);
     }
 
     void sliderValueChanged(Slider* slider) override
@@ -151,22 +168,7 @@ public:
         if (button == loadButton)
         {
             File fileToLoad = audioIO.browse();
-            AudioIO::AudioDataPair<float> audioDataPair;
-            if (audioIO.checkAndLoadFile(fileToLoad, audioDataPair))
-            {
-                audioLooper.load(*audioDataPair.getRawBuffer(), audioDataPair.metadata.sampleRate);
-
-                sumBuffer->setSize(1, audioDataPair.getRawBuffer()->getNumSamples());
-                sumBuffer->clear();
-                int numSamples = audioDataPair.getRawBuffer()->getNumSamples();
-                ippsAdd_32f(audioDataPair.getRawBuffer()->getWritePointer(0), audioDataPair.getRawBuffer()->getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
-                ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
-                waveformthumbnail.addBackgroundWaveform(*sumBuffer, audioDataPair.metadata.sampleRate);
-                waveformthumbnail.repaint();
-
-                thumbnailToUpdate.reset(sumBuffer->getNumChannels(), audioDataPair.metadata.sampleRate);
-                nextSampleNum = 0;
-            }
+            loadClip(fileToLoad);
         }
         else if (button == playButton)
         {
@@ -176,15 +178,27 @@ public:
             {
                 button->setButtonText("STOP");
                 audioLooper.play();
+                openGLWaveform->start();
+
             }
             else
             {
                 button->setButtonText("PLAY");
                 audioLooper.stop();
+                openGLWaveform->stop();
 
                 thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
                 nextSampleNum = 0;
             }
+        }
+    }
+
+    void comboBoxChanged (ComboBox *c) override
+    {
+        int selectedIndex = c->getSelectedId();
+        if (c == waveformChoices)
+        {
+            selectWaveformType(selectedIndex);
         }
     }
 private:
@@ -200,10 +214,67 @@ private:
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> playButton;
     ScopedPointer<Slider> gainKnob; // [0, 1] values
+    ScopedPointer<ComboBox> waveformChoices;
 //==============================================================================
     int64 nextSampleNum;
     AudioThumbnail& thumbnailToUpdate;
     WaveformThumbnail waveformthumbnail;
+
+//==============================================================================
+    // Audio & GL Audio Buffer
+    RingBuffer<float> * ringBuffer;
+    ScopedPointer<OpenGLWaveform> openGLWaveform;
+
+//==============================================================================
+    // auxiliary methods
+    void loadClip(File fileToLoad)
+    {
+        AudioIO::AudioDataPair<float> audioDataPair;
+        if (audioIO.checkAndLoadFile(fileToLoad, audioDataPair))
+        {
+            audioLooper.load(*audioDataPair.getRawBuffer(), audioDataPair.metadata.sampleRate);
+
+            sumBuffer->setSize(1, audioDataPair.getRawBuffer()->getNumSamples());
+            sumBuffer->clear();
+            int numSamples = audioDataPair.getRawBuffer()->getNumSamples();
+            ippsAdd_32f(audioDataPair.getRawBuffer()->getWritePointer(0), audioDataPair.getRawBuffer()->getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
+            ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
+            waveformthumbnail.addBackgroundWaveform(*sumBuffer, audioDataPair.metadata.sampleRate);
+            waveformthumbnail.repaint();
+
+            thumbnailToUpdate.reset(sumBuffer->getNumChannels(), audioDataPair.metadata.sampleRate);
+            nextSampleNum = 0;
+        }
+    }
+
+    void selectWaveformType(int type) // type: 1 --> thumbnail, 2 --> opengl
+    {
+        type == 1 ? openGLWaveform->stop() : openGLWaveform->start();
+        type == 1 ? openGLWaveform->setVisible(false) : openGLWaveform->setVisible(true);
+        type == 1 ? waveformthumbnail.setVisible(true) : waveformthumbnail.setVisible(false);
+    }
+
+    void feedWaveformThumbnail(AudioSampleBuffer& buffer)
+    {
+        const auto numSamples = buffer.getNumSamples();
+        sumBuffer->clear();
+        ippsAdd_32f(buffer.getWritePointer(0), buffer.getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
+        ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
+        thumbnailToUpdate.addBlock(nextSampleNum, *sumBuffer, 0, numSamples);
+        nextSampleNum += numSamples;
+        if (nextSampleNum > audioLooper.getNumSamples())
+        {
+            nextSampleNum = 0;
+            thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
+        }
+    }
+
+    void feedOpenGLWaveform(AudioSampleBuffer& buffer)
+    {
+        const auto numSamples = buffer.getNumSamples();
+        // Write to Ring Buffer
+        ringBuffer->writeSamples (buffer, 0, numSamples);
+    }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
