@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="jSS34D" name="Graph01" displaySplashScreen="0" reportAppUsage="1"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.Graph01" includeBinaryInAppConfig="1"
+              cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
+  <MAINGROUP id="cVcbwG" name="Graph01">
+    <GROUP id="{67C4A5D9-BF38-965E-09F9-5E6A6AE9A560}" name="Source">
+      <FILE id="ddxp7O" name="OpenGLSineWave.cpp" compile="1" resource="0"
+            file="Source/OpenGLSineWave.cpp"/>
+      <FILE id="KcDYtb" name="OpenGLSineWave.h" compile="0" resource="0"
+            file="Source/OpenGLSineWave.h"/>
+      <FILE id="OPX6hQ" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="hn6ZEw" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="Dv3BBs" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" userNotes="https://gitlab.com/wikibooks-opengl/modern-tutorials/tree/master/graph01">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" enablePluginBinaryCopyStep="1" isDebug="1" optimisation="1"
+                       linkTimeOptimisation="0" targetName="Graph01"/>
+        <CONFIGURATION name="Release" enablePluginBinaryCopyStep="1" isDebug="0" optimisation="3"
+                       linkTimeOptimisation="1" targetName="Graph01"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_events" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_video" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../SDKs/JuceLibrary/5.2.0/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
