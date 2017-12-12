@@ -38,8 +38,7 @@ public:
         audioBuffer = new AudioBuffer<Type> (numChannels, bufferSize);
         writePosition = 0;
     }
-    
-    
+
     /** Writes samples to all channels in the RingBuffer.
      
         @param newAudioData     an audio buffer to write into the RingBuffer

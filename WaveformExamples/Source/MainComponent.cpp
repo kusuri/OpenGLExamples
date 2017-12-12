@@ -6,19 +6,15 @@
   ==============================================================================
 */
 
-#include "AudioIO.h"
-#include "LoopAudio.h"
-#include "WaveformThumbnail.h"
-#include "OpenGLWaveform.h"
+#include "MainComponent.h"
 
-#include "ipps.h"
-#include "ippvm.h"
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
 class MainContentComponent   : public AudioAppComponent,
+                                public ApplicationCommandTarget,
                                 public SliderListener,
                                 public ButtonListener,
                                 public ComboBoxListener
@@ -89,7 +85,7 @@ public:
         // Uses two channels
         ringBuffer = new RingBuffer<GLfloat> (2, samplesPerBlockExpected * 10);
 
-        addAndMakeVisible(openGLWaveform = new OpenGLWaveform(ringBuffer));
+        addAndMakeVisible(openGLWaveform = new OpenGLWaveform(ringBuffer, fileSamples));
 
     }
 
@@ -155,6 +151,67 @@ public:
             openGLWaveform->setBounds(rect);
     }
 
+    //==============================================================================
+    ApplicationCommandTarget* getNextCommandTarget () override
+    {
+        // this will return the next parent component that is an ApplicationCommandTarget (in this
+        // case, there probably isn't one, but it's best to use this method in your own apps).
+        return findFirstTargetParentComponent();
+    }
+
+    void getAllCommands (Array< CommandID > &commands) override
+    {
+        const CommandID engineIDs[] = { MainWindow::renderingEngineOne,
+                                        MainWindow::renderingEngineTwo,
+                                        MainWindow::renderingEngineThree };
+
+        auto renderingEngines = MainWindow::getMainAppWindow()->getRenderingEngines();
+        commands.addArray (engineIDs, renderingEngines.size());
+    }
+
+    void getCommandInfo (CommandID commandID, ApplicationCommandInfo &result) override
+    {
+        const String generalCategory ("General");
+        switch (commandID)
+        {
+            case MainWindow::renderingEngineOne:
+            case MainWindow::renderingEngineTwo:
+            case MainWindow::renderingEngineThree:
+            {
+                auto& mainWindow = *MainWindow::getMainAppWindow();
+                auto engines = mainWindow.getRenderingEngines();
+                const int index = commandID - MainWindow::renderingEngineOne;
+
+                result.setInfo ("Use " + engines[index], "Uses the " + engines[index] + " engine to render the UI", generalCategory, 0);
+                result.setTicked (mainWindow.getActiveRenderingEngine() == index);
+
+                result.addDefaultKeypress ('1' + index, ModifierKeys::noModifiers);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    bool perform (const InvocationInfo &info) override
+    {
+        if (auto* mainWindow = MainWindow::getMainAppWindow())
+        {
+            switch (info.commandID)
+            {
+                case MainWindow::renderingEngineOne:
+                case MainWindow::renderingEngineTwo:
+                case MainWindow::renderingEngineThree:
+                    mainWindow->setRenderingEngine (info.commandID - MainWindow::renderingEngineOne);
+                    break;
+                default:
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    //==============================================================================
     void sliderValueChanged(Slider* slider) override
     {
         if (slider == gainKnob)
@@ -201,6 +258,12 @@ public:
             selectWaveformType(selectedIndex);
         }
     }
+
+    //==============================================================================
+    bool isShowingOpenGLDemo() const
+    {
+        return openGLWaveform->isVisible();
+    }
 private:
     //==============================================================================
 
@@ -210,6 +273,7 @@ private:
     LoopAudio<float> audioLooper; /*!< LoopAudio object in charge of playback. */
     Atomic<float> gain = 1.0f;
     ScopedPointer<AudioSampleBuffer> sumBuffer;
+    int fileSamples;
 //==============================================================================
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> playButton;
@@ -236,9 +300,9 @@ private:
 
             sumBuffer->setSize(1, audioDataPair.getRawBuffer()->getNumSamples());
             sumBuffer->clear();
-            int numSamples = audioDataPair.getRawBuffer()->getNumSamples();
-            ippsAdd_32f(audioDataPair.getRawBuffer()->getWritePointer(0), audioDataPair.getRawBuffer()->getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
-            ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
+            fileSamples = audioDataPair.getRawBuffer()->getNumSamples();
+            ippsAdd_32f(audioDataPair.getRawBuffer()->getWritePointer(0), audioDataPair.getRawBuffer()->getWritePointer(1), sumBuffer->getWritePointer(0), fileSamples);
+            ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), fileSamples);
             waveformthumbnail.addBackgroundWaveform(*sumBuffer, audioDataPair.metadata.sampleRate);
             waveformthumbnail.repaint();
 
@@ -279,6 +343,139 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
 };
 
+//==============================================================================
+static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
 
-// (This function is called by the app startup code to create our main component)
-Component* createMainContentComponent()     { return new MainContentComponent(); }
+MainWindow::MainWindow (String name)
+: DocumentWindow (name,
+                  Desktop::getInstance().getDefaultLookAndFeel().findColour (ResizableWindow::backgroundColourId),
+                  DocumentWindow::allButtons)
+{
+    setUsingNativeTitleBar (true);
+    contentComponent = new MainContentComponent();
+    setContentOwned (contentComponent, true);
+    setResizable (true, true);
+
+    centreWithSize (getWidth(), getHeight());
+    setVisible (true);
+
+    // this lets the command manager use keypresses that arrive in our window to send out commands
+    addKeyListener (getApplicationCommandManager().getKeyMappings());
+
+    triggerAsyncUpdate();
+}
+
+MainWindow::~MainWindow()
+{
+    clearContentComponent();
+    contentComponent = nullptr;
+    applicationCommandManager = nullptr;
+
+#if JUCE_OPENGL
+    openGLContext.detach();
+#endif
+}
+
+void MainWindow::closeButtonPressed() 
+{
+    // This is called when the user tries to close this window. Here, we'll just
+    // ask the app to quit when this happens, but you can change this to do
+    // whatever you need.
+    JUCEApplication::getInstance()->systemRequestedQuit();
+}
+
+MainWindow* MainWindow::getMainAppWindow()
+{
+    for (int i = TopLevelWindow::getNumTopLevelWindows(); --i >= 0;)
+        if (auto* maw = dynamic_cast<MainWindow*> (TopLevelWindow::getTopLevelWindow (i)))
+            return maw;
+
+    return nullptr;
+}
+
+void MainWindow::handleAsyncUpdate()
+{
+    // This registers all of our commands with the command manager but has to be done after the window has
+    // been created so we can find the number of rendering engines available
+    auto& commandManager = MainWindow::getApplicationCommandManager();
+
+    commandManager.registerAllCommandsForTarget (contentComponent);
+    commandManager.registerAllCommandsForTarget (JUCEApplication::getInstance());
+}
+
+ApplicationCommandManager& MainWindow::getApplicationCommandManager()
+{
+    if (applicationCommandManager == nullptr)
+        applicationCommandManager = new ApplicationCommandManager();
+
+    return *applicationCommandManager;
+}
+
+static const char* openGLRendererName = "OpenGL Renderer";
+StringArray MainWindow::getRenderingEngines() const
+{
+    StringArray renderingEngines;
+
+    if (auto* peer = getPeer())
+        renderingEngines = peer->getAvailableRenderingEngines();
+
+#if JUCE_OPENGL
+    renderingEngines.add (openGLRendererName);
+#endif
+
+    return renderingEngines;
+}
+
+void MainWindow::setRenderingEngine (int index)
+{
+    showMessageBubble (getRenderingEngines()[index]);
+
+#if JUCE_OPENGL
+    if (getRenderingEngines()[index] == openGLRendererName
+        && contentComponent != nullptr
+        && ! contentComponent->isShowingOpenGLDemo())
+    {
+        openGLContext.attachTo (*getTopLevelComponent());
+        return;
+    }
+
+    openGLContext.detach();
+#endif
+
+    if (auto* peer = getPeer())
+        peer->setCurrentRenderingEngine (index);
+}
+
+void MainWindow::setOpenGLRenderingEngine()
+{
+    setRenderingEngine (getRenderingEngines().indexOf (openGLRendererName));
+}
+
+int MainWindow::getActiveRenderingEngine() const
+{
+#if JUCE_OPENGL
+    if (openGLContext.isAttached())
+        return getRenderingEngines().indexOf (openGLRendererName);
+#endif
+
+    if (auto* peer = getPeer())
+        return peer->getCurrentRenderingEngine();
+
+    return 0;
+}
+
+void MainWindow::showMessageBubble (const String& text)
+{
+    currentBubbleMessage = new BubbleMessageComponent (500);
+    getContentComponent()->addChildComponent (currentBubbleMessage);
+
+    AttributedString attString;
+    attString.append (text, Font (15.0f));
+
+    currentBubbleMessage->showAt ({ getLocalBounds().getCentreX(), 10, 1, 1 },
+                                  attString,
+                                  500,  // numMillisecondsBeforeRemoving
+                                  true,  // removeWhenMouseClicked
+                                  false); // deleteSelfAfterUse
+}
+

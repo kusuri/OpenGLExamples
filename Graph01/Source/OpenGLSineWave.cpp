@@ -58,11 +58,11 @@ void OpenGLSineWave::renderOpenGL ()
     /* Draw using the vertices in our vertex buffer object */
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    glEnableVertexAttribArray(attribute_coord2d);
-    glVertexAttribPointer(attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attribute_coord1d);
+    glVertexAttribPointer(attribute_coord1d, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
-    glUniform1f(uniform_sprite, 0);
-    glDrawArrays(GL_LINE_STRIP, 0, 2000);
+//    glUniform1f(uniform_sprite, 0);
+    glDrawArrays(GL_LINE_STRIP, 0, 101);
 }
 
 void OpenGLSineWave::openGLContextClosing ()
@@ -74,10 +74,10 @@ void OpenGLSineWave::initResources()
 {
     createShaders();
 
-    attribute_coord2d = glGetAttribLocation(shaderProgram->getProgramID(), "coord2d");
+    attribute_coord1d = glGetAttribLocation(shaderProgram->getProgramID(), "coord1d");
     uniform_offset_x = glGetUniformLocation(shaderProgram->getProgramID(), "offset_x");
     uniform_scale_x = glGetUniformLocation(shaderProgram->getProgramID(), "scale_x");
-    uniform_sprite = glGetUniformLocation(shaderProgram->getProgramID(), "sprite");
+//    uniform_sprite = glGetUniformLocation(shaderProgram->getProgramID(), "sprite");
     uniform_mytexture = glGetUniformLocation(shaderProgram->getProgramID(), "mytexture");
 
     /* Enable blending */
@@ -89,28 +89,33 @@ void OpenGLSineWave::initResources()
     glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &texture_id);
     glBindTexture(GL_TEXTURE_2D, texture_id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 2048, 1, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, graph);
 
-
+    /* Create the vertex buffer object */
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    point graph[2000];
-    for (int iSample = 0; iSample < 2000; ++iSample)
+    // Create an array with only x values
+    GLfloat line[101];
+    for (int iSample = 0; iSample < 101; ++iSample)
     {
-        float x = (iSample - 1000.0f) / 100.0f;
-        graph[iSample].x = x;
-        graph[iSample].y = sin(x * 10.0f) / (1.0f + x * x);
+        line[iSample] = (iSample - 50.0f) / 50.0f;
     }
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(graph), graph, GL_STATIC_DRAW);
+    // tell OpenGL to copy our array to the buffer object
+    glBufferData(GL_ARRAY_BUFFER, sizeof(line), line, GL_STATIC_DRAW);
+
+    // Enable point size control in vertex shader
+#ifndef GL_ES_VERSION_2_0
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
 }
 
 void OpenGLSineWave::createShaders()
 {
     vertexShader =
-    "attribute vec2 coord2d;\n"
+    "attribute vec2 coord1d;\n"
     "varying vec4 f_color;\n"
     "uniform float offset_x;\n"
     "uniform float scale_x;\n"
@@ -118,8 +123,8 @@ void OpenGLSineWave::createShaders()
     "\n"
     "void main()\n"
     "{\n"
-    "gl_Position = vec4((coord2d.x + offset_x) * scale_x, coord2d.y, 0, 1);\n"
-    "f_color = vec4(coord2d.xy/2.0 + 0.5, 1, 1);\n"
+    "gl_Position = vec4((coord1d.x + offset_x) * scale_x, coord1d.y, 0, 1);\n"
+    "f_color = vec4(coord1d.xy/2.0 + 0.5, 1, 1);\n"
     "gl_PointSize = max(1.0, sprite);\n"
     "}\n";
 

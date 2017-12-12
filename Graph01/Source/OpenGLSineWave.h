@@ -16,12 +16,6 @@ class OpenGLSineWave : public Component,
                         public OpenGLRenderer
 {
 public:
-
-    struct point {
-        GLfloat x;
-        GLfloat y;
-    };
-
     OpenGLSineWave();
     ~OpenGLSineWave();
 
@@ -60,7 +54,7 @@ private:
     float offset_x = 0.0f;
     float scale_x = 1.0f;
 
-    GLint attribute_coord2d;
+    GLint attribute_coord1d;
     GLint uniform_offset_x;
     GLint uniform_scale_x;
     GLint uniform_sprite;

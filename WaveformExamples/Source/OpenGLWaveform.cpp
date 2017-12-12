@@ -10,9 +10,11 @@
 
 #include "OpenGLWaveform.h"
 
-OpenGLWaveform::OpenGLWaveform(RingBuffer<GLfloat> * ringBuffer)
-: readBuffer (2, RING_BUFFER_READ_SIZE)
+OpenGLWaveform::OpenGLWaveform(RingBuffer<GLfloat> * ringBuffer, int size)
+: bufferSize(size), readBuffer (2, RING_BUFFER_READ_SIZE)
 {
+//    visualizationBuffer = new GLfloat[bufferSize];
+
     this->ringBuffer = ringBuffer;
 
     // set up OpenGL context and attach it to the component
@@ -45,7 +47,7 @@ void OpenGLWaveform::renderOpenGL()
     jassert(OpenGLHelpers::isContextActive());
 
     // set up viewport
-    const float renderingScale = (float) openGLContext.getRenderingScale();
+    const float renderingScale = /*(float) openGLContext.getRenderingScale()*/0.5;
     GLsizei width = roundToInt(renderingScale * getWidth());
     GLsizei height = roundToInt(renderingScale * getHeight());
     glViewport(0, 0, width, height);
@@ -141,7 +143,7 @@ void OpenGLWaveform::createShaders()
 
     fragmentShader =
     "uniform vec2  resolution;\n"
-    "uniform float audioSampleData[256];\n"
+    "uniform float audioSampleData[512];\n"
     "\n"
     "void getAmplitudeForXPos (in float xPos, out float audioAmplitude)\n"
     "{\n"

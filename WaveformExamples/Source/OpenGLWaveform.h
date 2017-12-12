@@ -13,13 +13,13 @@
 #include "JuceHeader.h"
 #include "RingBuffer.h"
 
-#define RING_BUFFER_READ_SIZE 256
+#define RING_BUFFER_READ_SIZE 512
 
 class OpenGLWaveform : public Component,
                         public OpenGLRenderer
 {
 public:
-    OpenGLWaveform(RingBuffer<GLfloat> * ringBuffer);
+    OpenGLWaveform(RingBuffer<GLfloat> * ringBuffer, int size);
     ~OpenGLWaveform();
 
     /** Overriden method of OpenGLRenderer class.
@@ -85,8 +85,9 @@ private:
     const char* fragmentShader;
 
     // Audio Buffer
+    int bufferSize;
     RingBuffer<GLfloat> * ringBuffer;
     AudioBuffer<GLfloat> readBuffer;    // Stores data read from ring buffer
-    GLfloat visualizationBuffer [RING_BUFFER_READ_SIZE];    // Single channel to visualize
+    GLfloat visualizationBuffer[RING_BUFFER_READ_SIZE];    // Single channel to visualize
 };
 

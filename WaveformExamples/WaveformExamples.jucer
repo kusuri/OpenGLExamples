@@ -6,6 +6,7 @@
               cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
   <MAINGROUP id="q8TaH8" name="WaveformExamples">
     <GROUP id="{1D43732B-1C3D-8696-38F5-5B3B1B7F52A3}" name="Source">
+      <FILE id="dXEKnT" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="BJVP8Y" name="RingBuffer.h" compile="0" resource="0" file="Source/RingBuffer.h"/>
       <GROUP id="{E30A10C7-1531-5B04-B57D-396FB6533F12}" name="Waveforms">
         <FILE id="ZFLUjq" name="OpenGLWaveform.cpp" compile="1" resource="0"
