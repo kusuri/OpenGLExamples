@@ -47,7 +47,7 @@ void OpenGLWaveform::renderOpenGL()
     jassert(OpenGLHelpers::isContextActive());
 
     // set up viewport
-    const float renderingScale = /*(float) openGLContext.getRenderingScale()*/0.5;
+    const float renderingScale = (float) openGLContext.getRenderingScale();
     GLsizei width = roundToInt(renderingScale * getWidth());
     GLsizei height = roundToInt(renderingScale * getHeight());
     glViewport(0, 0, width, height);

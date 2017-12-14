@@ -22,6 +22,7 @@
 #include "LoopAudio.h"
 #include "WaveformThumbnail.h"
 #include "OpenGLWaveform.h"
+#include "AudioOscilloscope.h"
 
 #include "ipps.h"
 #include "ippvm.h"

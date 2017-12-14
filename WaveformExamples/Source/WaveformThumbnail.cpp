@@ -10,10 +10,11 @@
 
 #include "WaveformThumbnail.h"
 
-WaveformThumbnail::WaveformThumbnail()
-: thumbnailCache(5), // The AudioThumbnailCache objects must be constructed with the number of thumbnails to store.
-    staticThumbnail(512, formatManager, thumbnailCache),
-    thumbnail(512, formatManager, thumbnailCache) // The AudioThumbnail object itself needs to be constructed by telling it how many source samples will be used to create a single thumbnail sample. This governs the resolution of the low resolution version.
+WaveformThumbnail::WaveformThumbnail(AudioThumbnail& t)
+:thumbnail(t),
+ thumbnailCache(5),// The AudioThumbnailCache objects must be constructed with the number of thumbnails to store.
+    staticThumbnail(512, formatManager, thumbnailCache)
+     // The AudioThumbnail object itself needs to be constructed by telling it how many source samples will be used to create a single thumbnail sample. This governs the resolution of the low resolution version.
 {
     formatManager.registerBasicFormats();
     thumbnail.addChangeListener(this);

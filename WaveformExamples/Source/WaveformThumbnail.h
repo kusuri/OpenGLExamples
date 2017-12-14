@@ -18,7 +18,7 @@ class WaveformThumbnail : public Component,
                           private ChangeListener
 {
 public:
-    WaveformThumbnail();
+    WaveformThumbnail(AudioThumbnail& t);
     ~WaveformThumbnail();
 
     void paint (Graphics& g) override;
@@ -29,7 +29,7 @@ private:
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbnailCache;
     AudioThumbnail staticThumbnail;
-    AudioThumbnail thumbnail;
+    AudioThumbnail& thumbnail;
 
     void changeListenerCallback (ChangeBroadcaster* source) override
     {

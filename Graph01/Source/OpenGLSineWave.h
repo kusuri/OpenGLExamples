@@ -16,6 +16,12 @@ class OpenGLSineWave : public Component,
                         public OpenGLRenderer
 {
 public:
+    struct point {
+        GLfloat x;
+        GLfloat y;
+    };
+
+    
     OpenGLSineWave();
     ~OpenGLSineWave();
 
@@ -47,17 +53,16 @@ private:
     OpenGLContext openGLContext;
     ScopedPointer<OpenGLShaderProgram> shaderProgram;
 
-    GLuint VBO;
+    GLuint VBO[3];
     const char* vertexShader;
     const char* fragmentShader;
 
     float offset_x = 0.0f;
     float scale_x = 1.0f;
+    const int border = 10;
+    const int ticksize = 10;
 
-    GLint attribute_coord1d;
-    GLint uniform_offset_x;
-    GLint uniform_scale_x;
-    GLint uniform_sprite;
-    GLuint texture_id;
-    GLint uniform_mytexture;
+    GLint attribute_coord2d;
+    GLint uniform_color;
+    GLint uniform_transform;
 };
