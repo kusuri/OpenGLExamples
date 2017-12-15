@@ -43,7 +43,8 @@ public:
         waveformChoices->addItem("Waveform thumbnail", 1);
         waveformChoices->addItem("Audio Oscilloscpe", 2);
         waveformChoices->addItem("OpenGL Waveform", 3);
-        waveformChoices->setSelectedId(1, dontSendNotification);
+        waveformChoices->addItem("AudioVisualiserComponent", 4);
+        waveformChoices->setSelectedId(2, dontSendNotification);
         waveformChoices->addListener(this);
 
         for (int i = 0; i < numWaveforms; ++i)
@@ -55,6 +56,10 @@ public:
             AudioOscilloscope* aO = new AudioOscilloscope();
             addAndMakeVisible(aO);
             vWaveform.add(aO);
+
+            AudioVisualiserComponent* vC = new AudioVisualiserComponent(1);
+            addAndMakeVisible(vC);
+            visualiserComponents.add(vC);
         }
 
         
@@ -65,7 +70,7 @@ public:
         setAudioChannels (2, 2);
 
         loadClip(File("~/Music/audiotracks/loops/blankbanshee2.wav"));
-        selectWaveformType(1);
+        selectWaveformType(2);
         
         setSize (800, 1000);
     }
@@ -114,8 +119,14 @@ public:
                 feedWaveformThumbnail(*bufferToFill.buffer);
             else if (waveformChoices->getSelectedId() == 2)
                 feedAudioOscilloscope(*bufferToFill.buffer);
-            else
+            else if (waveformChoices->getSelectedId() == 3)
                 feedOpenGLWaveform(*bufferToFill.buffer);
+            else
+            {
+                for (int i = 0; i < numWaveforms; ++i)
+                    visualiserComponents[i]->pushBuffer(*bufferToFill.buffer);
+            }
+
         }
     }
 
@@ -171,6 +182,13 @@ public:
                 openGLWaveform[i]->setBounds(rect.removeFromTop(100));
                 rect.removeFromTop(50);
             }
+        }
+
+        rect.setTop(waveformChoices->getBottom() + buttonSize);
+        for (int i = 0; i < numWaveforms; ++i)
+        {
+            visualiserComponents[i]->setBounds(rect.removeFromTop(100));
+            rect.removeFromTop(50);
         }
     }
 
@@ -260,7 +278,9 @@ public:
                 audioLooper.play();
 
                 for (int i = 0; i < numWaveforms; ++i)
+                {
                     openGLWaveform[i]->start();
+                }
 
             }
             else
@@ -268,8 +288,10 @@ public:
                 button->setButtonText("PLAY");
                 audioLooper.stop();
 
-                for (int i = 0; i < numWaveforms; ++i)
+                for (int i = 0; i < numWaveforms; ++i) {
+                    vWaveform[i]->clear();
                     openGLWaveform[i]->stop();
+                }
 
                 thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
                 nextSampleNum = 0;
@@ -317,6 +339,8 @@ private:
 //==============================================================================
     OwnedArray<AudioOscilloscope> vWaveform;
 
+//==============================================================================
+    OwnedArray<AudioVisualiserComponent> visualiserComponents;
 //==============================================================================
     // Audio & GL Audio Buffer
     RingBuffer<float> * ringBuffer;
@@ -367,6 +391,7 @@ private:
                     openGLWaveform[i]->stop();
                     openGLWaveform[i]->setVisible(false);
                     vWaveform[i]->setVisible(false);
+                    visualiserComponents[i]->setVisible(false);
                     waveformthumbnail[i]->setVisible(true);
                 }
                 break;
@@ -376,6 +401,7 @@ private:
                     openGLWaveform[i]->stop();
                     openGLWaveform[i]->setVisible(false);
                     waveformthumbnail[i]->setVisible(false);
+                    visualiserComponents[i]->setVisible(false);
                     vWaveform[i]->setVisible(true);
                 }
                 break;
@@ -384,8 +410,19 @@ private:
                 {
                     waveformthumbnail[i]->setVisible(false);
                     vWaveform[i]->setVisible(false);
+                    visualiserComponents[i]->setVisible(false);
                     openGLWaveform[i]->start();
                     openGLWaveform[i]->setVisible(true);
+                }
+                break;
+            case 4:
+                for (int i = 0; i < numWaveforms; ++i)
+                {
+                    waveformthumbnail[i]->setVisible(false);
+                    vWaveform[i]->setVisible(false);
+                    openGLWaveform[i]->stop();
+                    openGLWaveform[i]->setVisible(false);
+                    visualiserComponents[i]->setVisible(true);
                 }
                 break;
             default:
@@ -416,7 +453,7 @@ private:
         ippsAdd_32f(buffer.getWritePointer(0), buffer.getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
         ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
 
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < numWaveforms; ++i)
             vWaveform[i]->processBlock(sumBuffer->getReadPointer(0), numSamples);
 
         nextSampleNum += numSamples;
