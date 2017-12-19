@@ -69,9 +69,9 @@ public:
         // specify the number of input and output channels that we want to open
         setAudioChannels (2, 2);
 
-        loadClip(File("~/Music/audiotracks/loops/blankbanshee2.wav"));
-        selectWaveformType(2);
-        
+//        loadClip(File("~/Music/audiotracks/loops/blankbanshee2.wav"));
+//        selectWaveformType(2);
+
         setSize (800, 1000);
     }
 
@@ -267,6 +267,8 @@ public:
         {
             File fileToLoad = audioIO.browse();
             loadClip(fileToLoad);
+            selectWaveformType(2);
+            resized();
         }
         else if (button == playButton)
         {
@@ -372,6 +374,7 @@ private:
             // Setup Ring Buffer of GLfloat's for the visualizer to use
             // Uses two channels
             ringBuffer = new RingBuffer<GLfloat> (2, fileSamples);
+            openGLWaveform.clear();
             for (int i = 0; i < numWaveforms; ++i)
             {
                 OpenGLWaveform* openglW = new OpenGLWaveform(ringBuffer, fileSamples);
