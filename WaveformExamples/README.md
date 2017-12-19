@@ -11,5 +11,13 @@ At the moment the user can load an audio clip and the application with plot its 
 - OpenGL waveform: a pure OpenGL implementation using the Juce OpenGL renderer
 - AudioVisualisationComponent: see [here](https://juce.com/doc/classAudioVisualiserComponent)
 
+The user is able to change the UI renderers with the shortcut keys:
+
+- Use Software Renderer : 1
+- Use CoreGraphics Renderer : 2
+- Use OpenGL Renderer : 3
+
+
 The user can select the waveform implementation from a combobox.
+
 Also, this application contains a gain knob to adjust the output volume.
