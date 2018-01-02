@@ -10,6 +10,15 @@
 
 #pragma once
 
+#include "AudioIO.h"
+#include "LoopAudio.h"
+#include "WaveformThumbnail.h"
+#include "OpenGLWaveform.h"
+#include "AudioOscilloscope.h"
+#include "CustomAudioThumbnail.h"
+
+#include "ipps.h"
+#include "ippvm.h"
 /*
  ==============================================================================
 
@@ -17,15 +26,6 @@
 
  ==============================================================================
  */
-
-#include "AudioIO.h"
-#include "LoopAudio.h"
-#include "WaveformThumbnail.h"
-#include "OpenGLWaveform.h"
-#include "AudioOscilloscope.h"
-
-#include "ipps.h"
-#include "ippvm.h"
 
 //==============================================================================
 /*

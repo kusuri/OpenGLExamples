@@ -18,22 +18,39 @@ class WaveformThumbnail : public Component,
                           private ChangeListener
 {
 public:
-    WaveformThumbnail(AudioThumbnail& t);
+    WaveformThumbnail(AudioThumbnail& playbackT, AudioThumbnail& currentT);
     ~WaveformThumbnail();
 
     void paint (Graphics& g) override;
 
     void addBackgroundWaveform(AudioSampleBuffer &data, double sampleRate);
     AudioThumbnail& getAudioThumbnail();
+
+    void setGridSize(int newSize) { blockSize = newSize; };
 private:
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbnailCache;
     AudioThumbnail staticThumbnail;
+    AudioThumbnail& playbackThumbnail;
     AudioThumbnail& thumbnail;
+
+    int sliceSamples;
+    int currentSlice = -1;
+    int blockSize = 4;
 
     void changeListenerCallback (ChangeBroadcaster* source) override
     {
         if (source == &thumbnail)
-            repaint();
+        {
+            double totalSamples = thumbnail.getTotalLength();
+            totalSamples *= 44100;
+            int x = (totalSamples / sliceSamples);
+            int newSlice = x % blockSize;
+            if ( newSlice != currentSlice)
+            {
+                currentSlice = newSlice;
+                repaint();
+            }
+        }
     }
 };

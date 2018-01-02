@@ -13,6 +13,10 @@
               file="Source/AudioOscilloscope.cpp"/>
         <FILE id="cUVRqK" name="AudioOscilloscope.h" compile="0" resource="0"
               file="Source/AudioOscilloscope.h"/>
+        <FILE id="pojaL8" name="CustomAudioThumbnail.cpp" compile="1" resource="0"
+              file="Source/CustomAudioThumbnail.cpp"/>
+        <FILE id="w7djPF" name="CustomAudioThumbnail.h" compile="0" resource="0"
+              file="Source/CustomAudioThumbnail.h"/>
         <FILE id="ZFLUjq" name="OpenGLWaveform.cpp" compile="1" resource="0"
               file="Source/OpenGLWaveform.cpp"/>
         <FILE id="ZdrmrE" name="OpenGLWaveform.h" compile="0" resource="0"
