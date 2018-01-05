@@ -22,9 +22,8 @@ class MainContentComponent   : public AudioAppComponent,
 public:
     //==============================================================================
     MainContentComponent()
-    :numWaveforms(3), nextSampleNum(0), thumbnailCache(5),
-    playbackThumbnail(512, formatManager, thumbnailCache),
-    thumbnailToUpdate(512, formatManager, thumbnailCache)
+    :numWaveforms(1), nextSampleNum(0)/*, thumbnailCache(5),
+    thumbnail(256, formatManager, thumbnailCache)*/
     {
         audioLooper.setLooping(false);
         
@@ -50,11 +49,18 @@ public:
         waveformChoices->setSelectedId(2, dontSendNotification);
         waveformChoices->addListener(this);
 
+        addAndMakeVisible(shiftMode = new ToggleButton());
+        shiftMode->setButtonText("Shift");
+        shiftMode->setToggleState(false, dontSendNotification);
+        shiftMode->addListener(this);
+
+        waveformController = new WaveformThumbnailController();
         for (int i = 0; i < numWaveforms; ++i)
         {
-            WaveformThumbnail* wT = new WaveformThumbnail(playbackThumbnail, thumbnailToUpdate);
+            WaveformThumbnail* wT = new WaveformThumbnail();
             addAndMakeVisible(wT);
             waveformthumbnail.add(wT);
+            waveformController->addWaveform(wT);
 
             AudioOscilloscope* aO = new AudioOscilloscope();
             addAndMakeVisible(aO);
@@ -88,7 +94,7 @@ public:
         loadClip(File("~/Music/audiotracks/loops/blankbanshee2.wav"));
         selectWaveformType(5);
 
-        setSize (800, 1000);
+        setSize (1500, 1000);
     }
 
     ~MainContentComponent()
@@ -98,6 +104,7 @@ public:
         loadButton->removeListener(this);
         playButton->removeListener(this);
         gainKnob->removeListener(this);
+        shiftMode->removeListener(this);
     }
 
     //==============================================================================
@@ -179,6 +186,7 @@ public:
         playButton->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
         gainKnob->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
         waveformChoices->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
+        shiftMode->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize));
         rect.removeFromTop(buttonSize);
 
         rect.setLeft(0);
@@ -187,7 +195,7 @@ public:
             gridSliders[i]->setBounds(rect.removeFromLeft(buttonSize).withHeight(buttonSize/2));
             rect.setLeft(0);
             rect.removeFromTop(buttonSize/2);
-            waveformthumbnail[i]->setBounds(rect.removeFromTop(100));
+            waveformthumbnail[i]->setBounds(rect.removeFromTop(200));
             rect.removeFromTop(50);
         }
 
@@ -336,23 +344,32 @@ public:
                 for (int i = 0; i < numWaveforms; ++i)
                 {
                     openGLWaveform[i]->start();
+
+                    waveformthumbnail[i]->getAudioThumbnail().reset(sumBuffer->getNumChannels(), 44100);
                 }
 
+                nextSampleNum = 0;
             }
             else
             {
                 button->setButtonText("PLAY");
                 audioLooper.stop();
 
-                for (int i = 0; i < numWaveforms; ++i) {
+                for (int i = 0; i < numWaveforms; ++i)
+                {
                     vWaveform[i]->clear();
                     openGLWaveform[i]->stop();
                 }
 
-                playbackThumbnail.reset(sumBuffer->getNumChannels(), 44100);
-                thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
-                nextSampleNum = 0;
+//                playbackThumbnail.reset(sumBuffer->getNumChannels(), 44100);
+//                thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
+//                nextSampleNum = 0;
             }
+        }
+        else if (button == shiftMode)
+        {
+            for (int i = waveformthumbnail.size(); --i >=0;)
+                waveformthumbnail[i]->enableShiftMode(button->getToggleState());
         }
     }
 
@@ -389,9 +406,8 @@ private:
     int64 nextSampleNum;
     int numWaveforms;
 //==============================================================================
-    AudioFormatManager formatManager;
-    AudioThumbnailCache thumbnailCache;
-    AudioThumbnail playbackThumbnail, thumbnailToUpdate;
+    ScopedPointer<ToggleButton> shiftMode;
+    ScopedPointer<WaveformThumbnailController> waveformController;
     OwnedArray<WaveformThumbnail> waveformthumbnail;
 //==============================================================================
     OwnedArray<AudioOscilloscope> vWaveform;
@@ -415,19 +431,18 @@ private:
         {
             audioLooper.load(*audioDataPair.getRawBuffer(), audioDataPair.metadata.sampleRate);
 
-            sumBuffer->setSize(1, audioDataPair.getRawBuffer()->getNumSamples());
-            sumBuffer->clear();
-            fileSamples = audioDataPair.getRawBuffer()->getNumSamples();
-            ippsAdd_32f(audioDataPair.getRawBuffer()->getWritePointer(0), audioDataPair.getRawBuffer()->getWritePointer(1), sumBuffer->getWritePointer(0), fileSamples);
-            ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), fileSamples);
-            for (int i = 0; i < numWaveforms; ++i)
-            {
-                waveformthumbnail[i]->addBackgroundWaveform(*sumBuffer, audioDataPair.metadata.sampleRate);
-                waveformthumbnail[i]->repaint();
-            }
-
-            playbackThumbnail.reset(sumBuffer->getNumChannels(), 44100);
-            thumbnailToUpdate.reset(sumBuffer->getNumChannels(), audioDataPair.metadata.sampleRate);
+//            sumBuffer->setSize(1, audioDataPair.getRawBuffer()->getNumSamples());
+//            sumBuffer->clear();
+//            fileSamples = audioDataPair.getRawBuffer()->getNumSamples();
+//            ippsAdd_32f(audioDataPair.getRawBuffer()->getWritePointer(0), audioDataPair.getRawBuffer()->getWritePointer(1), sumBuffer->getWritePointer(0), fileSamples);
+//            ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), fileSamples);
+////            for (int i = 0; i < numWaveforms; ++i)
+////            {
+////                waveformthumbnail[i]->addBackgroundWaveform(*sumBuffer, audioDataPair.metadata.sampleRate);
+////                waveformthumbnail[i]->repaint();
+////            }
+//
+////            thumbnail.reset(sumBuffer->getNumChannels(), 44100);
             nextSampleNum = 0;
 
             // Setup Ring Buffer of GLfloat's for the visualizer to use
@@ -514,14 +529,20 @@ private:
         ippsAdd_32f(buffer.getWritePointer(0), buffer.getWritePointer(1), sumBuffer->getWritePointer(0), numSamples);
         ippsMulC_32f_I(0.5f, sumBuffer->getWritePointer(0), numSamples);
 
-        playbackThumbnail.addBlock(nextSampleNum, *sumBuffer, 0, numSamples);
-        thumbnailToUpdate.addBlock(nextSampleNum, *sumBuffer, 0, numSamples);
+        for (int i = 0; i < numWaveforms; ++i)
+        {
+            waveformthumbnail[i]->updateWaveform(nextSampleNum, *sumBuffer);
+        }
+//        thumbnail.addBlock(nextSampleNum, *sumBuffer, 0, numSamples);
         nextSampleNum += numSamples;
         if (nextSampleNum > audioLooper.getNumSamples())
         {
             nextSampleNum = 0;
-            playbackThumbnail.reset(sumBuffer->getNumChannels(), 44100);
-            thumbnailToUpdate.reset(sumBuffer->getNumChannels(), 44100);
+
+            for (int i = 0; i < numWaveforms; ++i)
+            {
+                waveformthumbnail[i]->getAudioThumbnail().reset(sumBuffer->getNumChannels(), 44100);
+            }
         }
     }
 
